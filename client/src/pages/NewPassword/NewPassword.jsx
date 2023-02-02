@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Navbar } from "../../components/Navbar";
 import { validateForm } from "../../utils/validateForm";
@@ -30,31 +30,37 @@ export function NewPassword() {
         setShowConfirmPassword((show) => !show);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // prevents page refresh
 
         const formData = new FormData(event.currentTarget);
+        const password = formData.get("password");
+        const cPassword = formData.get("confirmPassword");
 
-        const isValid = validateForm(formData, setFeedback, "login");
-
-        if (isValid) {
+        if (password?.trim() === "" || cPassword?.trim() === "") {
+            setFeedback("Please fill all compulsory fields!");
+        } else if (password !== cPassword) {
+            setFeedback("Passwords do not match!");
+        } else {
             // frontend validation done, all fields are valid, do further process here
 
             try {
                 const {
-                    data: { userId, role, message },
+                    data: { message },
                 } = await axios.post(
-                    `${process.env.REACT_APP_API_ENDPOINT}/newPassword`,
+                    `${process.env.REACT_APP_API_ENDPOINT}/user/newPass`,
                     {
-                        email: formData.get("email"),
-                        password: formData.get("password"),
+                        email: location.state,
+                        password,
+                        cPassword,
                     },
                     { withCredentials: true }
                 );
 
                 // setFeedback(message);
-                if (userId) {
+                if (message === "password updated") {
                     // save the user to global state here, (useContext, useReducer)
                     navigate("/login");
                 }

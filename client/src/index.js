@@ -5,7 +5,7 @@ import { App } from "./App";
 import { BrowserRouter as Router } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { cyan } from "@mui/material/colors";
+import { AppProvider } from "./context/app-context";
 
 const theme = createTheme({
     palette: {
@@ -18,10 +18,12 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
-            <Router>
-                <CssBaseline />
-                <App />
-            </Router>
+            <AppProvider>
+                <Router>
+                    <CssBaseline />
+                    <App />
+                </Router>
+            </AppProvider>
         </ThemeProvider>
     </React.StrictMode>
 );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -17,10 +17,13 @@ import FormControl from "@mui/material/FormControl";
 import { Checkbox, FormControlLabel, Link, Grid } from "@mui/material";
 import { Navbar } from "../../components/Navbar";
 import { validateForm } from "../../utils/validateForm";
+import { useApp } from "../../context/app-context";
 
 export function Login() {
     const [feedback, setFeedback] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+
+    const { setCurrentUser } = useApp();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -42,9 +45,9 @@ export function Login() {
 
             try {
                 const {
-                    data: { userId, role, message },
+                    data: { userId, message },
                 } = await axios.post(
-                    `${process.env.REACT_APP_API_ENDPOINT}/login`,
+                    `${process.env.REACT_APP_API_ENDPOINT}/user/userLogin`,
                     {
                         email: formData.get("email"),
                         password: formData.get("password"),
@@ -55,7 +58,9 @@ export function Login() {
                 // setFeedback(message);
                 if (userId) {
                     // save the user to global state here, (useContext, useReducer)
-                    navigate("/");
+                    localStorage.setItem("currentUser", JSON.stringify(userId));
+                    setCurrentUser(userId);
+                    navigate("/home");
                 }
             } catch (error) {
                 // console.log(error.response.data.message);

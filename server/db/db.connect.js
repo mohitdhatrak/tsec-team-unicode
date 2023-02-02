@@ -1,11 +1,19 @@
-const mongoose=require('mongoose')
-const dotenv=require('dotenv').config()
-const db="mongodb+srv://unicode:unitsec@cluster0.jkz6enf.mongodb.net/db?retryWrites=true&w=majority"
-mongoose.connect(db,{
-    useNewUrlParser:true,
-   // useCreateIndex:true,
-    useUnifiedTopology:true,
-    //useFindAndModify:false
-}).then(()=>{
-    console.log('Connection Succesful');
-}).catch((err)=>console.log('no connection'));
+const mongoose = require("mongoose");
+
+const uri = process.env.MONGODB_URI;
+
+const connectToMongoDB = async () => {
+    try {
+        const connection = await mongoose.connect(uri, {
+            useUnifiedTopology: true,
+            useNewUrlParser: true,
+        });
+        if (connection) {
+            console.log("Successfully connected to the database");
+        }
+    } catch (error) {
+        console.error("Mongoose connection failed", error);
+    }
+};
+
+module.exports = { connectToMongoDB };

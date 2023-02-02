@@ -17,6 +17,7 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import { Navbar } from "../../components/Navbar";
 import { Checkbox, FormControlLabel, Link } from "@mui/material";
+import { useApp } from "../../context/app-context";
 
 export function Signup() {
     const [feedback, setFeedback] = useState("");
@@ -27,8 +28,9 @@ export function Signup() {
     const handleClickShowConfirmPassword = () =>
         setShowConfirmPassword((show) => !show);
 
+    const { setCurrentUser } = useApp();
+
     const navigate = useNavigate();
-    const location = useLocation();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -42,18 +44,15 @@ export function Signup() {
 
             try {
                 const {
-                    data: { userId, role, message },
+                    data: { userId, message },
                 } = await axios.post(
-                    `${process.env.REACT_APP_API_ENDPOINT}/signup`,
+                    `${process.env.REACT_APP_API_ENDPOINT}/user/newUser`,
                     {
-                        userData: {
-                            name: formData.get("name"),
-                            email: formData.get("email"),
-                            phone: formData.get("phone"),
-                            location: formData.get("location"),
-                            password: formData.get("password"),
-                            role: location.state,
-                        },
+                        username: formData.get("name"),
+                        email: formData.get("email"),
+                        mobile: formData.get("phone"),
+                        pincode: formData.get("pincode"),
+                        password: formData.get("password"),
                     },
                     { withCredentials: true }
                 );
@@ -61,11 +60,13 @@ export function Signup() {
                 // setFeedback(message);
                 if (userId) {
                     // save the user to global state here, useReducer
-                    navigate("/");
+                    localStorage.setItem("currentUser", JSON.stringify(userId));
+                    setCurrentUser(userId);
+                    navigate("/home");
                 }
             } catch (error) {
                 // console.log(error);
-                setFeedback(error.response.data.message);
+                setFeedback(error.response?.data.message);
             }
         }
     };
@@ -77,7 +78,7 @@ export function Signup() {
             <Container component="main" maxWidth="xs">
                 <Box
                     sx={{
-                        marginTop: 5,
+                        marginTop: 3,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
@@ -115,11 +116,22 @@ export function Signup() {
                         />
                         <TextField
                             margin="normal"
+                            required
                             fullWidth
                             id="phone"
                             label="Phone Number"
                             name="phone"
                             autoComplete="phone"
+                            onChange={() => setFeedback("")}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="pincode"
+                            label="Pincode"
+                            name="pincode"
+                            autoComplete="pincode"
                             onChange={() => setFeedback("")}
                         />
                         <FormControl
