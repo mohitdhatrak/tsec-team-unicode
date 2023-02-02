@@ -25,6 +25,7 @@ export function Home() {
               }
               const data = await res.json()
               setUserData(data)
+
         } catch(err) {
             navigate("/")
             console.log(err)

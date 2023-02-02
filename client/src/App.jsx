@@ -11,6 +11,7 @@ import { CreateListing } from "./pages/CreateListing/CreateListing";
 import { useApp } from "./context/app-context";
 import { useEffect } from "react";
 import axios from "axios";
+import ViewListingPage from "./pages/ViewListingPage.js/ViewListingPage";
 
 export function App() {
   const location = useLocation();
@@ -28,6 +29,7 @@ export function App() {
 
       <Route path="/home" element={<Home />}></Route>
       <Route path="/create-listing" element={<CreateListing />}></Route>
+      <Route path="/view-listing" element={<ViewListingPage/>}> </Route>
       <Route path="*" element={<Error404Page />} />
     </Routes>
   );
