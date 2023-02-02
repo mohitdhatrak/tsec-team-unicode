@@ -1,7 +1,10 @@
 import { Link } from "@mui/material";
 import "./Error404Page.css";
+import { useApp } from "../../context/app-context";
 
 export function Error404Page() {
+    const { currentUser } = useApp();
+
     return (
         <div className="page-404">
             <div className="page-404-heading">404</div>
@@ -10,9 +13,15 @@ export function Error404Page() {
                 <div>We're sorry the page you requested could not be found</div>
                 <div>Please go back to the homepage</div>
             </div>
-            <Link href="/" variant="body1">
-                Go to home
-            </Link>
+            {currentUser ? (
+                <Link href="/" variant="body1">
+                    Go to home
+                </Link>
+            ) : (
+                <Link href="/home" variant="body1">
+                    Go to home
+                </Link>
+            )}
         </div>
     );
 }

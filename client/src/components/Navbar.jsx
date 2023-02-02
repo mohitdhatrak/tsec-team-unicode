@@ -15,6 +15,9 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { useState } from "react";
+import { useApp } from "../context/app-context";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
@@ -57,6 +60,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export function Navbar() {
+    const { currentUser, setCurrentUser } = useApp();
+    const navigate = useNavigate();
+
     const [anchorEl, setAnchorEl] = useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 
@@ -67,13 +73,53 @@ export function Navbar() {
         setAnchorEl(event.currentTarget);
     };
 
-    const handleMobileMenuClose = () => {
+    const handleMobileMenuClose = async () => {
         setMobileMoreAnchorEl(null);
+
+        localStorage.removeItem("currentUser");
+        setCurrentUser("");
+
+        try {
+            const {
+                data: { message },
+            } = await axios.get(
+                `${process.env.REACT_APP_API_ENDPOINT}/user/logout`,
+                {
+                    withCredentials: true,
+                }
+            );
+
+            console.log(message);
+        } catch (error) {
+            // console.log(error);
+        }
+
+        navigate("/login");
     };
 
-    const handleMenuClose = () => {
+    const handleMenuClose = async () => {
         setAnchorEl(null);
-        handleMobileMenuClose();
+        // handleMobileMenuClose();
+
+        localStorage.removeItem("currentUser");
+        setCurrentUser("");
+
+        try {
+            const {
+                data: { message },
+            } = await axios.get(
+                `${process.env.REACT_APP_API_ENDPOINT}/user/logout`,
+                {
+                    withCredentials: true,
+                }
+            );
+
+            console.log(message);
+        } catch (error) {
+            // console.log(error);
+        }
+
+        navigate("/login");
     };
 
     const handleMobileMenuOpen = (event) => {
@@ -97,8 +143,7 @@ export function Navbar() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
         </Menu>
     );
 
@@ -119,42 +164,7 @@ export function Navbar() {
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
-            <MenuItem>
-                <IconButton
-                    size="large"
-                    aria-label="show 4 new mails"
-                    color="inherit"
-                >
-                    <Badge badgeContent={4} color="error">
-                        <MailIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem>
-                <IconButton
-                    size="large"
-                    aria-label="show 17 new notifications"
-                    color="inherit"
-                >
-                    <Badge badgeContent={17} color="error">
-                        <NotificationsIcon />
-                    </Badge>
-                </IconButton>
-                <p>Notifications</p>
-            </MenuItem>
-            <MenuItem onClick={handleProfileMenuOpen}>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                >
-                    <AccountCircle />
-                </IconButton>
-                <p>Profile</p>
-            </MenuItem>
+            <MenuItem onClick={handleMobileMenuClose}>Logout</MenuItem>
         </Menu>
     );
 
@@ -162,7 +172,7 @@ export function Navbar() {
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton
+                    {/* <IconButton
                         size="large"
                         edge="start"
                         color="inherit"
@@ -170,16 +180,19 @@ export function Navbar() {
                         sx={{ mr: 2 }}
                     >
                         <MenuIcon />
-                    </IconButton>
+                    </IconButton> */}
                     <Typography
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{ display: { xs: "none", sm: "block" } }}
+                        sx={{
+                            display: { xs: "none", sm: "block" },
+                            cursor: "pointer",
+                        }}
                     >
                         Thrarter
                     </Typography>
-                    <Search>
+                    {/* <Search>
                         <SearchIconWrapper>
                             <SearchIcon />
                         </SearchIconWrapper>
@@ -187,42 +200,60 @@ export function Navbar() {
                             placeholder="Search…"
                             inputProps={{ "aria-label": "search" }}
                         />
-                    </Search>
+                    </Search> */}
                     <Box sx={{ flexGrow: 1 }} />
-                    <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="show 17 new notifications"
-                            color="inherit"
-                        >
-                            <Badge badgeContent={17} color="error">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle />
-                        </IconButton>
-                    </Box>
-                    <Box sx={{ display: { xs: "flex", md: "none" } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleMobileMenuOpen}
-                            color="inherit"
-                        >
-                            <MoreIcon />
-                        </IconButton>
-                    </Box>
+                    {currentUser ? (
+                        <>
+                            <Typography
+                                variant="h6"
+                                noWrap
+                                component="div"
+                                sx={{
+                                    display: { xs: "none", sm: "block" },
+                                    fontSize: "1rem",
+                                }}
+                            >
+                                About us
+                            </Typography>
+                        </>
+                    ) : (
+                        <>
+                            <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                                <IconButton
+                                    size="large"
+                                    aria-label="show new notifications"
+                                    color="inherit"
+                                >
+                                    <Badge badgeContent={0} color="error">
+                                        <NotificationsIcon />
+                                    </Badge>
+                                </IconButton>
+                                <IconButton
+                                    size="large"
+                                    edge="end"
+                                    aria-label="account of current user"
+                                    aria-controls={menuId}
+                                    aria-haspopup="true"
+                                    onClick={handleProfileMenuOpen}
+                                    color="inherit"
+                                >
+                                    <AccountCircle />
+                                </IconButton>
+                            </Box>
+                            <Box sx={{ display: { xs: "flex", md: "none" } }}>
+                                <IconButton
+                                    size="large"
+                                    aria-label="show more"
+                                    aria-controls={mobileMenuId}
+                                    aria-haspopup="true"
+                                    onClick={handleMobileMenuOpen}
+                                    color="inherit"
+                                >
+                                    <MoreIcon />
+                                </IconButton>
+                            </Box>
+                        </>
+                    )}
                 </Toolbar>
             </AppBar>
             {renderMobileMenu}

@@ -6,9 +6,12 @@ const AppContext = createContext(defaultProviderValues);
 
 export const AppProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState("");
+    const [userData, setUserData] = useState({});
 
     return (
-        <AppContext.Provider value={{ currentUser, setCurrentUser }}>
+        <AppContext.Provider
+            value={{ currentUser, setCurrentUser, userData, setUserData }}
+        >
             {children}
         </AppContext.Provider>
     );
