@@ -1,4 +1,4 @@
-export default function AboutUs() {
+export function AboutUs() {
     return (
         <div>
             This is a project build by four engineering visonaries/dreamers/web

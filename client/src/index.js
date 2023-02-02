@@ -18,12 +18,12 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
-            <AppProvider>
-                <Router>
+            <Router>
+                <AppProvider>
                     <CssBaseline />
                     <App />
-                </Router>
-            </AppProvider>
+                </AppProvider>
+            </Router>
         </ThemeProvider>
     </React.StrictMode>
 );
