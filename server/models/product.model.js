@@ -7,18 +7,20 @@ const prodSchema=new mongoose.Schema({
     },
     brand:{
         type:String,
-        required:true
     },
-    price:{
+    userPrice:{
         type:Number,
-        required:true
     },
+    algoPrice:{type:Number},
     category:{
         type:String,
-        required:true
     },
-    image:{
-        type:Buffer
+    url:[{
+        type:String
+    }],
+    yearsUsed:{
+        type:Number,
+        required:true
     },
     seller_id:{
         type:mongoose.Schema.Types.ObjectId,
