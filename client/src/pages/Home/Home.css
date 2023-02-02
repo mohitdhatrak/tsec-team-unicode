@@ -1,0 +1,14 @@
+.contentForHomePage{
+    width: auto;
+    height: 80%;
+}
+
+.bigButton{
+    width: 40%;
+    display: inline-block;
+    border-radius: 3px;
+}
+
+.bigButton:hover{
+    
+}
