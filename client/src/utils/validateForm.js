@@ -3,6 +3,7 @@ export function validateForm(data, setFeedback, formType) {
     const password = data.get("password");
     const name = data.get("name");
     const phone = data.get("phone");
+    const pincode = data.get("pincode");
     const confirmPassword = data.get("confirmPassword");
 
     const regexEmail =
@@ -16,12 +17,32 @@ export function validateForm(data, setFeedback, formType) {
     if (
         name?.trim() === "" ||
         email.trim() === "" ||
-        password.trim() === "" ||
+        phone?.trim() === "" ||
+        pincode?.trim() === "" ||
+        password?.trim() === "" ||
         confirmPassword?.trim() === ""
     ) {
         setFeedback("Please fill all compulsory fields!");
         return false;
-    } else if (
+    }
+
+    if (formType === "forgotPass") {
+        if (
+            !regexEmail.test(email.trim()) ||
+            email.startsWith(".") ||
+            email.endsWith(".") ||
+            email.endsWith("-") ||
+            email.includes("..") ||
+            email.includes(".@") ||
+            email.includes("@-")
+        ) {
+            setFeedback("Please enter a valid email!");
+            return false;
+        }
+        return true;
+    }
+
+    if (
         !regexEmail.test(email.trim()) ||
         email.startsWith(".") ||
         email.endsWith(".") ||

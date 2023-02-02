@@ -12,7 +12,8 @@ import { validateForm } from "../../utils/validateForm";
 
 export function ForgotPassword() {
     const [feedback, setFeedback] = useState("");
-    const [sendOtp, setSendOtp] = useState(true);
+    const [email, setEmail] = useState("");
+    const [sendOtp, setSendOtp] = useState(false);
 
     const navigate = useNavigate();
 
@@ -20,28 +21,29 @@ export function ForgotPassword() {
         event.preventDefault(); // prevents page refresh
 
         const formData = new FormData(event.currentTarget);
+        setEmail(formData.get("email"));
 
-        const isValid = validateForm(formData, setFeedback, "login");
+        const isValid = validateForm(formData, setFeedback, "forgotPass");
 
         if (isValid) {
             // frontend validation done, all fields are valid, do further process here
-
             try {
                 const {
-                    data: { userId, role, message },
+                    data: { message },
                 } = await axios.post(
-                    `${process.env.REACT_APP_API_ENDPOINT}/sendOtp`,
+                    `${process.env.REACT_APP_API_ENDPOINT}/user/forgotPass`,
                     {
-                        email: formData.get("email"),
-                        password: formData.get("password"),
+                        email,
                     },
                     { withCredentials: true }
                 );
 
                 // setFeedback(message);
-                if (userId) {
+                if (message === "OTP sent on registered email") {
                     // save the user to global state here, (useContext, useReducer)
                     setSendOtp(true);
+                } else if (message === "no user found") {
+                    setFeedback("Email not registered, signup!");
                 }
             } catch (error) {
                 // console.log(error.response.data.message);
@@ -54,28 +56,32 @@ export function ForgotPassword() {
         event.preventDefault(); // prevents page refresh
 
         const formData = new FormData(event.currentTarget);
+        const otp = formData.get("otp");
 
-        const isValid = validateForm(formData, setFeedback, "login");
+        const isValid = otp.trim() !== "";
+        setFeedback("Please enter the OTP!");
 
         if (isValid) {
             // frontend validation done, all fields are valid, do further process here
 
             try {
                 const {
-                    data: { userId, role, message },
+                    data: { message },
                 } = await axios.post(
-                    `${process.env.REACT_APP_API_ENDPOINT}/verifyOtp`,
+                    `${process.env.REACT_APP_API_ENDPOINT}/user/verifyOtp`,
                     {
-                        email: formData.get("email"),
-                        password: formData.get("password"),
+                        email,
+                        otp,
                     },
                     { withCredentials: true }
                 );
 
                 // setFeedback(message);
-                if (userId) {
+                if (message === "otp verified") {
                     // save the user to global state here, (useContext, useReducer)
-                    navigate("/new-password");
+                    navigate("/new-password", { state: email });
+                } else if (message === "invalid otp") {
+                    setFeedback("Invalid OTP!");
                 }
             } catch (error) {
                 // console.log(error.response.data.message);
