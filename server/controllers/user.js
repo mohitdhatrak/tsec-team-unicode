@@ -2,6 +2,7 @@ const express=require('express')
 const bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken')
 const app=express()
+
 const User=require('../models/user.model')
 const nodemailer=require('nodemailer')
 app.use(express.json())
@@ -52,10 +53,12 @@ const userLogin=async(req,res)=>{
             res.status(400).json({message:'Invalid credentials'})
             else
             {
-               const token=jwt.sign({email:req.body.email},SecretKey,{expiresIn:'1d'})
-               userData.tokens=userData.tokens.concat({token})
-               await userData.save()
-                return res.status(200).json({token:token,userData})
+               const token=jwt.sign({email:req.body.email},SecretKey)
+               res.cookie("jsonwebtoken", token, {
+                expires: new Date(Date.now() + 3600000),
+                httpOnly: true
+              })
+                return res.status(200).json({message:'Login Succesful'})
             }
 
     } catch (error) {
