@@ -2,3 +2,25 @@
     /* color: #d500f9; */
     font-weight: 600;
 }
+
+.parent{
+    margin-top:15px;
+    margin-bottom: 15px;
+    margin-left: 2px;
+    border:1.5px dashed;
+    padding: 10px;
+    border-color: #00000099;
+    border-radius: 3.2px;
+}
+
+#vohvalalabel{
+    color:#00000099;
+}
+
+.parent:hover{
+    border:1px solid black;
+}
+
+#image{
+    display: none;
+}
