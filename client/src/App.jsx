@@ -7,6 +7,7 @@ import { ForgotPassword } from "./pages/ForgotPassword/ForgotPassword";
 import { NewPassword } from "./pages/NewPassword/NewPassword";
 import AboutUs from "./pages/AboutUs/AboutUs";
 import { Home } from "./pages/Home/Home";
+import { CreateListing } from "./pages/CreateListing/CreateListing";
 
 export function App() {
     return (
@@ -18,6 +19,7 @@ export function App() {
             <Route path="/signup" element={<Signup />}></Route>
             <Route path="/forgot-password" element={<ForgotPassword />}></Route>
             <Route path="/new-password" element={<NewPassword />}></Route>
+            <Route path="/create-listing" element={<CreateListing />}></Route>
             <Route path="*" element={<Error404Page />} />
         </Routes>
     );
