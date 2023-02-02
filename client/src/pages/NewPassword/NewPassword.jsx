@@ -5,21 +5,23 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
-import { useLocation, useNavigate } from "react-router-dom";
-import { validateForm } from "../../utils/validateForm";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputAdornment from "@mui/material/InputAdornment";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import IconButton from "@mui/material/IconButton";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
 import { Navbar } from "../../components/Navbar";
-import { Checkbox, FormControlLabel, Link } from "@mui/material";
+import { validateForm } from "../../utils/validateForm";
+import {
+    FormControl,
+    IconButton,
+    InputAdornment,
+    InputLabel,
+    OutlinedInput,
+} from "@mui/material";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Visibility from "@mui/icons-material/Visibility";
 
-export function Signup() {
+export function NewPassword() {
     const [feedback, setFeedback] = useState("");
+
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -28,14 +30,13 @@ export function Signup() {
         setShowConfirmPassword((show) => !show);
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault(); // prevents page refresh
 
         const formData = new FormData(event.currentTarget);
 
-        const isValid = validateForm(formData, setFeedback, "signup");
+        const isValid = validateForm(formData, setFeedback, "login");
 
         if (isValid) {
             // frontend validation done, all fields are valid, do further process here
@@ -44,28 +45,22 @@ export function Signup() {
                 const {
                     data: { userId, role, message },
                 } = await axios.post(
-                    `${process.env.REACT_APP_API_ENDPOINT}/signup`,
+                    `${process.env.REACT_APP_API_ENDPOINT}/newPassword`,
                     {
-                        userData: {
-                            name: formData.get("name"),
-                            email: formData.get("email"),
-                            phone: formData.get("phone"),
-                            location: formData.get("location"),
-                            password: formData.get("password"),
-                            role: location.state,
-                        },
+                        email: formData.get("email"),
+                        password: formData.get("password"),
                     },
                     { withCredentials: true }
                 );
 
                 // setFeedback(message);
                 if (userId) {
-                    // save the user to global state here, useReducer
-                    navigate("/");
+                    // save the user to global state here, (useContext, useReducer)
+                    navigate("/login");
                 }
             } catch (error) {
-                // console.log(error);
-                setFeedback(error.response.data.message);
+                // console.log(error.response.data.message);
+                setFeedback(error.response?.data.message);
             }
         }
     };
@@ -77,51 +72,24 @@ export function Signup() {
             <Container component="main" maxWidth="xs">
                 <Box
                     sx={{
-                        marginTop: 5,
+                        marginTop: 8,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Sign Up
+                        New password
                     </Typography>
                     <Box
                         component="form"
                         onSubmit={handleSubmit}
                         noValidate
-                        sx={{ mt: 1, maxWidth: "90%" }}
+                        sx={{
+                            mt: 3,
+                            width: "80%",
+                        }}
                     >
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="name"
-                            label="Name"
-                            name="name"
-                            autoComplete="name"
-                            onChange={() => setFeedback("")}
-                            autoFocus
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            onChange={() => setFeedback("")}
-                        />
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            id="phone"
-                            label="Phone Number"
-                            name="phone"
-                            autoComplete="phone"
-                            onChange={() => setFeedback("")}
-                        />
                         <FormControl
                             fullWidth
                             variant="outlined"
@@ -188,12 +156,6 @@ export function Signup() {
                                 onChange={() => setFeedback("")}
                             />
                         </FormControl>
-                        <FormControlLabel
-                            control={
-                                <Checkbox value="remember" color="primary" />
-                            }
-                            label="Remember me"
-                        />
                         <Stack spacing={2} alignItems="center">
                             {feedback === "" ? (
                                 ""
@@ -209,14 +171,11 @@ export function Signup() {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                sx={{ mt: 2 }}
+                                sx={{ mt: 2, mb: 2 }}
                                 className="primary-btn"
                             >
-                                Sign Up
+                                Set password
                             </Button>
-                            <Link href="/login" variant="body2">
-                                Already have an account? Log in
-                            </Link>
                         </Stack>
                     </Box>
                 </Box>
