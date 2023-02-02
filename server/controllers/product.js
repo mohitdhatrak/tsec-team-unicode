@@ -19,7 +19,7 @@ const newProduct=async(req,res)=>{
 const updateProd=async(req,res)=>{
     try {
         let data=await Product.findByIdAndUpdate(req.params.id,req.body)
-        if(userData.email!=data.sellerEmail)
+        if(req.userData.email!=data.sellerEmail)
         return res.status(400).json({message:'Unauthorized'})
         res.status(200).json({message:'Updated'})
     } catch (error) {
@@ -28,7 +28,7 @@ const updateProd=async(req,res)=>{
 }
 const myProducts=async(req,res)=>{
     try{
-        let data=await Product.find({seller_id:userData._id})
+        let data=await Product.find({seller_id:req.userData._id})
         res.status(400).json({data})
     }catch(error){
         res.status(400).json({message:error.message})
