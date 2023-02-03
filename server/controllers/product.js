@@ -3,8 +3,8 @@ const app=express()
 const Product=require('../models/product.model')
 app.use(express.json())
 const newProduct=async(req,res)=>{
-    const {prodName, brand,userPrice,algoPrice, category,url,yearsUsed}=req.body;
-    if(!prodName || !brand || !userPrice || !category || !url || !yearsUsed)
+    const {prodName, brand,userPrice,algoPrice, description,url,yearsUsed}=req.body;
+    if(!prodName || !brand || !userPrice || !description || !url || !yearsUsed)
     return res.status(400).json({message:"Please fill the necessary details "})
     const prod=new Product(req.body) 
     try {
@@ -55,7 +55,6 @@ const searchedProduct=async(req,res)=>{
         const search=req.body
         const data1=await Product.find({prodName:search})
         const data2=await Product.find({brand:search})
-        const data3=await Product.find({category:search})
         res.status(200).json({data1,data2,data3})
     } catch (error) {
         res.status(400).json({message:error.message})
