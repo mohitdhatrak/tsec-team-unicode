@@ -11,6 +11,7 @@ export function Home() {
     //     getHomePage();
     // }, []);
 
+
     // const getHomePage = async () => {
     //     try {
     //         const res = await fetch("/AdminPage", {
