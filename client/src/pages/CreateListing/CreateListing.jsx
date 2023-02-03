@@ -49,77 +49,70 @@ export function CreateListing() {
     };
 
     const [feedback, setFeedback] = useState("");
-    const [estimatedCost, setEstimatedCost] = useState(0);
+    const [algoPrice, setAlgoPrice] = useState(0);
 
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        var imageFiles = document.getElementById("image");
+        // var imageFiles = document.getElementById("image");
 
-        for (const file of imageFiles.files) {
-            const formImage = new FormData();
-            formImage.append("file", file);
-            formImage.append(
-                "upload_preset",
-                process.env.REACT_APP_UPLOAD_PRESET
-            );
+        // for (const file of imageFiles.files) {
+        //     const formImage = new FormData();
+        //     formImage.append("file", file);
+        //     formImage.append(
+        //         "upload_preset",
+        //         process.env.REACT_APP_UPLOAD_PRESET
+        //     );
 
-            const url =
-                "https://api.cloudinary.com/v1_1/" +
-                process.env.REACT_APP_CLOUD_NAME +
-                "/image/upload";
-            const resp = await fetch(url, {
-                method: "POST",
-                body: formImage,
-                credentials: "omit",
-            });
+        //     const url =
+        //         "https://api.cloudinary.com/v1_1/" +
+        //         process.env.REACT_APP_CLOUD_NAME +
+        //         "/image/upload";
+        //     const resp = await fetch(url, {
+        //         method: "POST",
+        //         body: formImage,
+        //         credentials: "omit",
+        //     });
 
-            if (resp.status === 200) {
-                const respInJSON = await resp.json();
-                const url = respInJSON.secure_url;
-                console.log(url);
-                imageUrls.push(url);
-            } else {
-                alert(
-                    "There was an error in uploading the iamge please try again!"
-                );
-                return;
-            }
-        }
+        //     if (resp.status === 200) {
+        //         const respInJSON = await resp.json();
+        //         const url = respInJSON.secure_url;
+        //         console.log(url);
+        //         imageUrls.push(url);
+        //     } else {
+        //         alert(
+        //             "There was an error in uploading the iamge please try again!"
+        //         );
+        //         return;
+        //     }
+        // }
 
         const formData = new FormData(event.currentTarget);
 
-        const productName = formData.get("productName");
-        const productAge = formData.get("productAge");
+        const prodName = formData.get("prodName");
+        const yearsUsed = formData.get("yearsUsed");
         const condition = formData.get("condition");
-        const price = formData.get("price");
+        const userPrice = formData.get("userPrice");
         const description = formData.get("description");
 
-        if (productName.trim() === "" || condition.trim() === "") {
+        if (prodName.trim() === "" || condition.trim() === "") {
             setFeedback("Please fill all mandatory fields");
         } else {
             const value = await algorithmForCost(
-                productName,
-                productAge,
+                prodName,
+                yearsUsed,
                 condition
             );
-            setEstimatedCost(value);
+            setAlgoPrice(value);
 
             try {
                 const {
                     data: { message },
                 } = await axios.post(
                     `${process.env.REACT_APP_API_ENDPOINT}/product/newProduct`,
-                    {
-                        prodName: productName,
-                        yearsUsed: productAge,
-                        userPrice: price,
-                        description,
-                        algoPrice: estimatedCost,
-                        url: imageUrls,
-                    },
+                    formData,
                     { withCredentials: true }
                 );
 
@@ -158,6 +151,7 @@ export function CreateListing() {
                         </Typography>
                         <Box
                             component="form"
+                            encType="multipart/form-data"
                             noValidate
                             onSubmit={handleSubmit}
                             sx={{ mt: 3 }}
@@ -166,7 +160,7 @@ export function CreateListing() {
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         autoComplete="given-name"
-                                        name="productName"
+                                        name="prodName"
                                         required
                                         fullWidth
                                         id="ProductName"
@@ -210,14 +204,14 @@ export function CreateListing() {
                                             marks
                                             min={1}
                                             max={10}
-                                            name="productAge"
+                                            name="yearsUsed"
                                         />
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         autoComplete="given-name"
-                                        name="price"
+                                        name="userPrice"
                                         required
                                         fullWidth
                                         id="Price"
@@ -316,7 +310,7 @@ export function CreateListing() {
                                 id="outlined-read-only-input"
                                 label="Estimated price"
                                 defaultValue={0}
-                                value={estimatedCost}
+                                value={algoPrice}
                                 InputProps={{
                                     readOnly: true,
                                 }}
@@ -340,18 +334,17 @@ export function CreateListing() {
                                 <input
                                     // onChange={validateFileType}
                                     type="file"
-                                    accept="image/png,image/jpeg"
                                     // multiple
                                     id="image"
                                     name="image"
                                     // required
                                 ></input>
-                                <span
+                                {/* <span
                                     className="Error"
                                     dangerouslySetInnerHTML={{
                                         __html: errorForFile,
                                     }}
-                                ></span>
+                                ></span> */}
                             </div>
                             {feedback === "" ? (
                                 ""

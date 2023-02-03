@@ -8,9 +8,11 @@ const {
     products,
     searchedProduct,
     particularProduct,
+    uploadImage,
 } = require("../controllers/product");
 const authenticate = require("../middlewares/auth.middleware");
-router.post("/newProduct", authenticate, newProduct);
+const { upload } = require("../middlewares/multer.middleware");
+router.post("/newProduct", [authenticate, upload.single("image")], newProduct);
 router.patch("/:id", authenticate, updateProd);
 router.delete("/:id", authenticate, deleteProd);
 router.get("/myProducts", authenticate, myProducts);

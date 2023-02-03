@@ -1,56 +1,43 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { Navbar } from "../../components/Navbar";
+import { Box, Container } from "@mui/system";
+import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
+
+const buttonStyle = { margin: "20px auto", borderRadius: 10, padding: 150 };
 
 export function Home() {
-    const navigate = useNavigate();
-    const [userData, setUserData] = useState({});
-
-    // useEffect(() => {
-    //     getHomePage();
-    // }, []);
-
-
-    // const getHomePage = async () => {
-    //     try {
-    //         const res = await fetch("/AdminPage", {
-    //             method: "GET",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //             },
-    //             credentials: "include",
-    //         });
-    //         if (res.status !== 200) {
-    //             throw new Error();
-    //         }
-    //         const data = await res.json();
-    //         setUserData(data);
-    //     } catch (err) {
-    //         navigate("/");
-    //         console.log(err);
-    //     }
-    // };
-
-    const buyPageRouting = () => {
-        navigate("");
-    };
-
-    const sellPageRouting = () => {
-        navigate("");
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        console.log({
+            email: data.get("email"),
+            password: data.get("password"),
+        });
     };
 
     return (
         <>
-            <Navbar />
-            <div className="contentForHomePage">
-                <button className="bigButton" onClick={buyPageRouting}>
-                    I want to buy
-                </button>
-                <button className="bigButton" onClick={sellPageRouting}>
-                    I want to sell
-                </button>
-            </div>
+            <Container component="main" maxWidth="ms">
+                <Box
+                    sx={{
+                        marginTop: 22,
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                    }}
+                >
+                    <Link to="/view-listing">
+                        <Button variant="contained" style={buttonStyle}>
+                            <h1>Buy</h1>
+                        </Button>
+                    </Link>
+                    <Link to="/create-listing">
+                        <Button variant="contained" style={buttonStyle}>
+                            <h1>Sell</h1>
+                        </Button>
+                    </Link>
+                </Box>
+            </Container>
         </>
     );
 }

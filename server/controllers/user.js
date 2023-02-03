@@ -7,13 +7,6 @@ const User = require("../models/user.model");
 const nodemailer = require("nodemailer");
 app.use(express.json());
 const generateOtp = require("../utils/otp");
-var transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.EMAIL,
-        pass: process.env.PASS,
-    },
-});
 
 const SecretKey = process.env.SECRET_KEY;
 const geocoder_api_key = process.env.GEOCODER_API_KEY;
@@ -83,16 +76,20 @@ const userLogin = async (req, res) => {
 
 const forgotPass = async (req, res) => {
     const { email } = req.body;
-    if (!req.body.email)
-        return res
-            .status(400)
-            .json({ message: "Please provide registered emailId" });
+
     try {
         const userData = await User.findOne({ email: req.body.email });
         if (!userData)
             return res.status(400).json({ message: "no user found" });
         const otp = generateOtp();
         await User.findByIdAndUpdate(userData._id, { otp: otp });
+        var transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.PASS,
+            },
+        });
         var mailOptions = {
             from: "try.user99@gmail.com",
             to: userData.email,

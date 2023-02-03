@@ -21,6 +21,7 @@ const prodSchema = new mongoose.Schema(
                 type: String,
             },
         ],
+        image: { type: String },
         yearsUsed: {
             type: Number,
             required: true,

@@ -21,7 +21,6 @@ export function ForgotPassword() {
         event.preventDefault(); // prevents page refresh
 
         const formData = new FormData(event.currentTarget);
-        setEmail(formData.get("email"));
 
         const isValid = validateForm(formData, setFeedback, "forgotPass");
 
@@ -33,11 +32,12 @@ export function ForgotPassword() {
                 } = await axios.post(
                     `${process.env.REACT_APP_API_ENDPOINT}/user/forgotPass`,
                     {
-                        email,
+                        email: formData.get("email"),
                     },
                     { withCredentials: true }
                 );
 
+                setEmail(formData.get("email"));
                 // setFeedback(message);
                 if (message === "OTP sent on registered email") {
                     // save the user to global state here, (useContext, useReducer)
@@ -122,6 +122,7 @@ export function ForgotPassword() {
                                 fullWidth
                                 id="otp"
                                 label="Enter OTP"
+                                // value={sendOtp ? "" : null}
                                 name="otp"
                                 autoFocus
                                 onChange={() => setFeedback("")}

@@ -12,10 +12,14 @@ const newProduct = async (req, res) => {
         url,
         yearsUsed,
     } = req.body;
+
     if (!prodName || !userPrice || !description || !yearsUsed)
         return res
             .status(400)
             .json({ message: "Please fill the necessary details" });
+
+    const image = req.file ? req.file.filename : null;
+
     const prod = new Product(req.body);
 
     try {
@@ -28,6 +32,9 @@ const newProduct = async (req, res) => {
         });
         await Product.findByIdAndUpdate(prod._id, {
             algoPrice: req.body.algoPrice,
+        });
+        await Product.findByIdAndUpdate(prod._id, {
+            image: image,
         });
         res.json({ message: "Success" }).status(200);
     } catch (error) {
@@ -66,7 +73,7 @@ const deleteProd = async (req, res) => {
 
 const products = async (req, res) => {
     try {
-        const data = await Product.find();
+        const data = await Product.find({});
         res.status(200).json(data);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -78,7 +85,7 @@ const searchedProduct = async (req, res) => {
         const search = req.body;
         const data1 = await Product.find({ prodName: search });
         const data2 = await Product.find({ brand: search });
-        res.status(200).json({ data1, data2, data3 });
+        res.status(200).json({ data1, data2 });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

@@ -106,7 +106,7 @@ export function Landing() {
                 container
                 component="main"
                 sx={{
-                    height: "91.1vh",
+                    height: "91.8vh",
                     backgroundColor: "#000000",
                 }}
             >
