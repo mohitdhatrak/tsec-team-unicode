@@ -12,7 +12,7 @@ const prodSchema=new mongoose.Schema({
         type:Number,
     },
     algoPrice:{type:Number},
-    category:{
+    description:{
         type:String,
     },
     url:[{
