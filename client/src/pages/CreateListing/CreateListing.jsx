@@ -73,6 +73,7 @@ export function CreateListing() {
             const resp = await fetch(url, {
                 method: "POST",
                 body: formImage,
+                credentials: "omit",
             });
 
             if (resp.status === 200) {
@@ -116,7 +117,7 @@ export function CreateListing() {
                         yearsUsed: productAge,
                         userPrice: price,
                         description,
-                        algoprice: estimatedCost,
+                        algoPrice: estimatedCost,
                         url: imageUrls,
                     },
                     { withCredentials: true }
@@ -294,7 +295,7 @@ export function CreateListing() {
                                     </FormControl>
                                 </Grid>
                             </Grid>
-                            <Button
+                            {/* <Button
                                 type="submit"
                                 //   fullWidth
                                 width="60%"
@@ -304,10 +305,16 @@ export function CreateListing() {
                                 sx={{ mt: 3, mb: 2 }}
                             >
                                 Our estimation
-                            </Button>
+                            </Button> */}
+                            <FormHelperText
+                                id="component-helper-text"
+                                sx={{ ml: 1, mt: 2, mb: 2, fontSize: "1rem" }}
+                            >
+                                Our price estimation in rupees:
+                            </FormHelperText>
                             <TextField
                                 id="outlined-read-only-input"
-                                label="Price in rupees"
+                                label="Estimated price"
                                 defaultValue={0}
                                 value={estimatedCost}
                                 InputProps={{
@@ -328,16 +335,16 @@ export function CreateListing() {
                             <div className="parent">
                                 <label htmlFor="image" id="vohvalalabel">
                                     {" "}
-                                    Upload image(s) of product(s){" "}
+                                    Upload image of product
                                 </label>
                                 <input
-                                    onChange={validateFileType}
+                                    // onChange={validateFileType}
                                     type="file"
                                     accept="image/png,image/jpeg"
-                                    multiple
+                                    // multiple
                                     id="image"
                                     name="image"
-                                    required
+                                    // required
                                 ></input>
                                 <span
                                     className="Error"

@@ -15,7 +15,7 @@ var transporter = nodemailer.createTransport({
     },
 });
 
-const SecretKey = process.env.SECRETKEY;
+const SecretKey = process.env.SECRET_KEY;
 const geocoder_api_key = process.env.GEOCODER_API_KEY;
 
 const newUser = async (req, res) => {
@@ -143,42 +143,48 @@ const newPass = async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 };
-const logout=async(req,res)=>{
-    res.clearCookie("jsonwebtoken", { path: "/" })
-    res.status(200).json({message:'User logged out successfully'})
-}
+const logout = async (req, res) => {
+    res.clearCookie("jsonwebtoken", { path: "/" });
+    res.status(200).json({ message: "User logged out successfully" });
+};
 
+const distance = async (req, res) => {
+    const lat = req.userData.location.coordinates[0];
+    const lng = req.userData.location.coordinates[1];
+    const users = await User.find();
 
+    const filteredUsers = users.filter((user) => {
+        const distance = calculateDistance(
+            req.userData.lat,
+            req.userData.lng,
+            user.lat,
+            user.lng
+        );
+        return distance <= 5;
+    });
 
-const distance=async(req,res)=>{
-  const lat = req.userData.location.coordinates[0]
-  const lng= req.userData.location.coordinates[1]
-  const users=await User.find()
- 
-  const filteredUsers = users.filter(user => {
-    const distance = calculateDistance(req.userData.lat, req.userData.lng, user.lat, user.lng);
-    return distance <= 5;
-  });
-
-  // Return the filtered users
-  return res.json(filteredUsers);
+    // Return the filtered users
+    return res.json(filteredUsers);
 };
 
 function calculateDistance(lat1, lng1, lat2, lng2) {
-  const earthRadius = 6371;
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLng = (lng2 - lng1) * (Math.PI / 180);
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-    Math.sin(dLng / 2) * Math.sin(dLng / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = earthRadius * c;
-  return distance;
+    const earthRadius = 6371;
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLng = (lng2 - lng1) * (Math.PI / 180);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) *
+            Math.cos(lat2 * (Math.PI / 180)) *
+            Math.sin(dLng / 2) *
+            Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = earthRadius * c;
+    return distance;
 }
 
-const userPage=async(req,res)=>{
-        res.status(200).json(req.userData)
-}
+const userPage = async (req, res) => {
+    res.status(200).json(req.userData);
+};
 module.exports = {
     newUser,
     userLogin,
@@ -187,5 +193,5 @@ module.exports = {
     newPass,
     logout,
     distance,
-    userPage
+    userPage,
 };

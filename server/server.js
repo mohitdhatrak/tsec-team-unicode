@@ -7,6 +7,7 @@ const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
 const { connectToMongoDB } = require("./db/db.connect");
+const product = require("./routes/product.route");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -29,7 +30,7 @@ if (process.env.NODE_ENV === "development") {
 connectToMongoDB();
 
 app.use("/user", user);
-//app.use('/product',prod)
+app.use("/product", product);
 app.use((req, res, next) => {
     res.status(404).json({
         error: "not found",
